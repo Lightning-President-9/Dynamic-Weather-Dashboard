@@ -1,0 +1,30 @@
+/* Custom scrollbar for hourly forecast */
+#hourly-forecast::-webkit-scrollbar {
+    height: 8px;
+}
+
+#hourly-forecast::-webkit-scrollbar-track {
+    background: #f1f5f9; /* gray-100 */
+    border-radius: 10px;
+}
+
+.dark #hourly-forecast::-webkit-scrollbar-track {
+    background: #374151; /* gray-700 */
+}
+
+#hourly-forecast::-webkit-scrollbar-thumb {
+    background: #9ca3af; /* gray-400 */
+    border-radius: 10px;
+}
+
+#hourly-forecast::-webkit-scrollbar-thumb:hover {
+    background: #6b7280; /* gray-500 */
+}
+
+.dark #hourly-forecast::-webkit-scrollbar-thumb {
+    background: #4b5563; /* gray-600 */
+}
+
+.dark #hourly-forecast::-webkit-scrollbar-thumb:hover {
+    background: #374151; /* gray-700 */
+}

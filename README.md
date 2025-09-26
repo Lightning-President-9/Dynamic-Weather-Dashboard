@@ -36,4 +36,3 @@ This project is split into two main parts: the part you see (the **client**) and
 - **OnRender**: The platform where the app is deployed and runs 24/7.
 
 ---
-git clone https://github.com/Lightning-President-9/Dynamic-Weather-Dashboard.git

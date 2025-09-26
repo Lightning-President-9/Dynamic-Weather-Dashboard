@@ -1,30 +1,29 @@
-/* Custom scrollbar for hourly forecast */
 #hourly-forecast::-webkit-scrollbar {
     height: 8px;
 }
 
 #hourly-forecast::-webkit-scrollbar-track {
-    background: #f1f5f9; /* gray-100 */
+    background: #f1f5f9;
     border-radius: 10px;
 }
 
 .dark #hourly-forecast::-webkit-scrollbar-track {
-    background: #374151; /* gray-700 */
+    background: #374151;
 }
 
 #hourly-forecast::-webkit-scrollbar-thumb {
-    background: #9ca3af; /* gray-400 */
+    background: #9ca3af;
     border-radius: 10px;
 }
 
 #hourly-forecast::-webkit-scrollbar-thumb:hover {
-    background: #6b7280; /* gray-500 */
+    background: #6b7280;
 }
 
 .dark #hourly-forecast::-webkit-scrollbar-thumb {
-    background: #4b5563; /* gray-600 */
+    background: #4b5563;
 }
 
 .dark #hourly-forecast::-webkit-scrollbar-thumb:hover {
-    background: #374151; /* gray-700 */
+    background: #374151;
 }

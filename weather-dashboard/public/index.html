@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dynamic Weather Dashboard</title>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🌦️</text></svg>">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 font-['Inter'] text-gray-800 dark:text-gray-200 min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-4xl mx-auto">
+        <header class="flex flex-col sm:flex-row justify-between items-center mb-6">
+            <h1 id="location" class="text-3xl font-bold text-gray-800 dark:text-white mb-4 sm:mb-0">Loading...</h1>
+            <div class="flex items-center space-x-2 w-full sm:w-auto">
+                <input id="city-input" type="text" placeholder="Search for a city..." class="w-full sm:w-auto bg-white dark:bg-gray-800 border border-gray-300 dark:border-gray-600 rounded-lg py-2 px-4 focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <button id="search-btn" class="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-2 px-4 rounded-lg transition-colors">Search</button>
+                <button id="refresh-btn" class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.899 2.166l-1.414 1.414A5.002 5.002 0 005.999 7v2a1 1 0 11-2 0V3a1 1 0 011-1zm12 14a1 1 0 01-1-1v-2.101a7.002 7.002 0 01-11.899-2.166l1.414-1.414A5.002 5.002 0 0014.001 13v2a1 1 0 01-1 1z" clip-rule="evenodd" /></svg>
+                </button>
+            </div>
+        </header>
+
+        <div id="loading-spinner" class="text-center py-20">
+            <svg class="animate-spin h-10 w-10 text-blue-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
+            <p class="mt-4 text-lg">Fetching weather data...</p>
+        </div>
+
+        <div id="error-message" class="hidden text-center bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded-lg relative">
+            <strong class="font-bold">Error:</strong>
+            <p>Could not fetch weather data. Please try again.</p>
+        </div>
+
+        <main id="weather-container" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="md:col-span-1 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col items-center text-center">
+                <p id="current-day" class="font-semibold text-xl">Saturday</p>
+                <p id="current-date" class="text-gray-500 dark:text-gray-400 mb-4">September 27, 2025</p>
+                <img id="current-weather-icon" src="https://openweathermap.org/img/wn/10d@4x.png" alt="weather icon" class="w-32 h-32 -my-4">
+                <h2 id="current-temp" class="text-7xl font-bold text-gray-900 dark:text-white my-2">--°C</h2>
+                <p id="current-condition" class="capitalize text-lg text-gray-600 dark:text-gray-300">Light Rain</p>
+            </div>
+            <div class="md:col-span-2 space-y-6">
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
+                    <div class="flex flex-col items-center">
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Humidity</p>
+                        <p id="humidity" class="font-bold text-xl">--%</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Wind Speed</p>
+                        <p id="wind-speed" class="font-bold text-xl">-- km/h</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Feels Like</p>
+                        <p id="feels-like" class="font-bold text-xl">--°C</p>
+                    </div>
+                    <div class="flex flex-col items-center">
+                        <p class="text-gray-500 dark:text-gray-400 text-sm">Visibility</p>
+                        <p id="visibility" class="font-bold text-xl">-- km</p>
+                    </div>
+                </div>
+                 <div class="flex justify-center bg-gray-200 dark:bg-gray-700 rounded-lg p-1 w-40 mx-auto">
+                    <button id="celsius-btn" class="px-4 py-1 text-sm font-semibold rounded-md bg-white dark:bg-gray-500 text-gray-800 dark:text-white shadow">°C</button>
+                    <button id="fahrenheit-btn" class="px-4 py-1 text-sm font-semibold rounded-md">°F</button>
+                </div>
+                <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg">
+                    <h3 class="font-bold mb-4 text-lg">Today's Forecast</h3>
+                    <div id="hourly-forecast" class="flex space-x-4 overflow-x-auto pb-2">
+                        </div>
+                </div>
+            </div>
+        </main>
+        
+        <section id="forecast-container" class="hidden mt-6 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg">
+            <h3 class="font-bold mb-4 text-lg">7-Day Forecast</h3>
+            <div id="daily-forecast" class="space-y-3">
+                </div>
+        </section>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>

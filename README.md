@@ -1,4 +1,4 @@
-# 🌦️ Sleek Weather Dashboard
+# Sleek Weather Dashboard
 
 Hey there! Welcome to the repository for my dynamic weather dashboard. This was a really fun project built to create a clean, user-friendly way to check the weather, while also learning how to handle API keys securely.
 
@@ -6,6 +6,7 @@ Instead of calling the weather API directly from the browser (which would expose
 
 **Check out the live demo here!**  
 https://dynamic-weather-dashboard-cygs.onrender.com/
+
 *(Note: The free OnRender instance may take a moment to spin up if it's been inactive.)*
 ---
 

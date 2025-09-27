@@ -37,4 +37,4 @@ This project is split into two main parts: the part you see (the **client**) and
 
 ---
 ## Sample Web Image
-![Image](Sample_Image.png)
+![Image](Sample_Img.png)

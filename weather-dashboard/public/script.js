@@ -21,24 +21,29 @@ document.addEventListener('DOMContentLoaded', () => {
     const forecastContainer = document.getElementById('forecast-container');
     const errorMessage = document.getElementById('error-message');
     const refreshBtn = document.getElementById('refresh-btn');
-    const themeToggleBtn = document.getElementById('theme-toggle-btn'); // Theme button
 
     let currentUnit = 'celsius';
     let weatherDataCache = null;
 
-    // --- API Fetching ---
-    const getWeatherData = async (city = 'Nagpur') => {
+    // --- API Fetching (Updated for OnRender) ---
+    const getWeatherData = async (city = 'Delhi') => {
         showLoading();
+
+        // This URL points to our new server endpoint
         const apiUrl = `/api/weather?city=${city}`;
+
         try {
             const response = await fetch(apiUrl);
+            
             if (!response.ok) {
                 const errorData = await response.json();
                 throw new Error(errorData.error || 'City not found');
             }
+
             const data = await response.json();
             weatherDataCache = { current: data.current, forecast: data.forecast };
             updateUI();
+
         } catch (error) {
             console.error("Error fetching weather data:", error);
             showError(error.message);
@@ -48,26 +53,38 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- UI Updates ---
     const updateUI = () => {
         if (!weatherDataCache) return;
+
         const { current, forecast } = weatherDataCache;
+
+        // Update header
         locationEl.textContent = `${current.name}, ${current.sys.country}`;
+
+        // Update current weather
         const now = new Date(current.dt * 1000);
         currentDayEl.textContent = now.toLocaleDateString('en-US', { weekday: 'long' });
         currentDateEl.textContent = now.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
         currentWeatherIcon.src = `https://openweathermap.org/img/wn/${current.weather[0].icon}@4x.png`;
         currentTempEl.textContent = formatTemperature(current.main.temp);
         currentConditionEl.textContent = current.weather[0].description;
+        
+        // Update details
         humidityEl.textContent = `${current.main.humidity}%`;
         windSpeedEl.textContent = formatSpeed(current.wind.speed);
         feelsLikeEl.textContent = formatTemperature(current.main.feels_like);
         visibilityEl.textContent = `${(current.visibility / 1000).toFixed(1)} km`;
+
+        // Update hourly forecast
         updateHourlyForecast(forecast.list);
+        
+        // Update daily forecast
         updateDailyForecast(forecast.list);
+
         hideLoading();
     };
     
     const updateHourlyForecast = (hourlyData) => {
         hourlyForecastContainer.innerHTML = '';
-        const next24Hours = hourlyData.slice(0, 8);
+        const next24Hours = hourlyData.slice(0, 8); // 3-hour intervals for 24 hours
         next24Hours.forEach(item => {
             const hour = new Date(item.dt * 1000).toLocaleTimeString('en-US', { hour: 'numeric', hour12: true });
             const hourlyEl = document.createElement('div');
@@ -84,9 +101,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const updateDailyForecast = (dailyData) => {
         dailyForecastContainer.innerHTML = '';
         const dailyForecasts = {};
+
         dailyData.forEach(item => {
             const date = new Date(item.dt * 1000).toLocaleDateString('en-US', { weekday: 'long' });
             if (!dailyForecasts[date] && Object.keys(dailyForecasts).length < 7) {
+                 // Ensure we don't duplicate today
                 const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
                 if(date !== today) {
                    dailyForecasts[date] = { temps: [], weather: item.weather[0] };
@@ -101,6 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const dayData = dailyForecasts[day];
             const minTemp = Math.min(...dayData.temps);
             const maxTemp = Math.max(...dayData.temps);
+
             const dailyEl = document.createElement('div');
             dailyEl.className = "flex items-center justify-between bg-gray-100 dark:bg-gray-700 rounded-lg p-3";
             dailyEl.innerHTML = `
@@ -150,8 +170,9 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     
     const formatSpeed = (speed) => {
+        // speed is in meter/sec, convert to km/h
          return `${(speed * 3.6).toFixed(1)} km/h`;
-    };
+    }
 
     const toggleUnits = (unit) => {
         if (unit === currentUnit) return;
@@ -192,18 +213,6 @@ document.addEventListener('DOMContentLoaded', () => {
     celsiusBtn.addEventListener('click', () => toggleUnits('celsius'));
     fahrenheitBtn.addEventListener('click', () => toggleUnits('fahrenheit'));
 
-    // --- New Theme Toggle Logic ---
-    themeToggleBtn.addEventListener('click', () => {
-        // Toggle the 'dark' class on the <html> element
-        document.documentElement.classList.toggle('dark');
-
-        // Update localStorage with the user's preference
-        if (document.documentElement.classList.contains('dark')) {
-            localStorage.setItem('theme', 'dark');
-        } else {
-            localStorage.setItem('theme', 'light');
-        }
-    });
-
-    getWeatherData();
+    // --- Initial Load ---
+    getWeatherData(); // Load default city on start
 });

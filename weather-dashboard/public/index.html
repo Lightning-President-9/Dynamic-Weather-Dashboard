@@ -8,8 +8,15 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+    </script>
 </head>
-<body class="bg-gray-50 dark:bg-gray-900 font-['Inter'] text-gray-800 dark:text-gray-200 min-h-screen flex items-center justify-center p-4">
+<body class="bg-gray-50 dark:bg-gray-900 font-['Inter'] text-gray-800 dark:text-gray-200 min-h-screen flex items-center justify-center p-4 transition-colors duration-300">
     <div class="w-full max-w-4xl mx-auto">
         <header class="flex flex-col sm:flex-row justify-between items-center mb-6">
             <h1 id="location" class="text-3xl font-bold text-gray-800 dark:text-white mb-4 sm:mb-0">Loading...</h1>
@@ -19,6 +26,10 @@
                 <button id="refresh-btn" class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-semibold py-2 px-4 rounded-lg transition-colors">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.899 2.166l-1.414 1.414A5.002 5.002 0 005.999 7v2a1 1 0 11-2 0V3a1 1 0 011-1zm12 14a1 1 0 01-1-1v-2.101a7.002 7.002 0 01-11.899-2.166l1.414-1.414A5.002 5.002 0 0014.001 13v2a1 1 0 01-1 1z" clip-rule="evenodd" /></svg>
                 </button>
+                <button id="theme-toggle-btn" class="bg-gray-200 dark:bg-gray-700 hover:bg-gray-300 dark:hover:bg-gray-600 text-gray-800 dark:text-white font-semibold py-2 px-4 rounded-lg transition-colors">
+                    <svg id="sun-icon" class="h-5 w-5 dark:hidden" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                    <svg id="moon-icon" class="h-5 w-5 hidden dark:block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+                </button>
             </div>
         </header>
 
@@ -26,12 +37,10 @@
             <svg class="animate-spin h-10 w-10 text-blue-500 mx-auto" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg>
             <p class="mt-4 text-lg">Fetching weather data...</p>
         </div>
-
         <div id="error-message" class="hidden text-center bg-red-100 dark:bg-red-900 border border-red-400 dark:border-red-700 text-red-700 dark:text-red-200 px-4 py-3 rounded-lg relative">
             <strong class="font-bold">Error:</strong>
             <p>Could not fetch weather data. Please try again.</p>
         </div>
-
         <main id="weather-container" class="hidden grid grid-cols-1 md:grid-cols-3 gap-6">
             <div class="md:col-span-1 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg flex flex-col items-center text-center">
                 <p id="current-day" class="font-semibold text-xl">Saturday</p>
@@ -42,39 +51,24 @@
             </div>
             <div class="md:col-span-2 space-y-6">
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg grid grid-cols-2 sm:grid-cols-4 gap-4 text-center">
-                    <div class="flex flex-col items-center">
-                        <p class="text-gray-500 dark:text-gray-400 text-sm">Humidity</p>
-                        <p id="humidity" class="font-bold text-xl">--%</p>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <p class="text-gray-500 dark:text-gray-400 text-sm">Wind Speed</p>
-                        <p id="wind-speed" class="font-bold text-xl">-- km/h</p>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <p class="text-gray-500 dark:text-gray-400 text-sm">Feels Like</p>
-                        <p id="feels-like" class="font-bold text-xl">--°C</p>
-                    </div>
-                    <div class="flex flex-col items-center">
-                        <p class="text-gray-500 dark:text-gray-400 text-sm">Visibility</p>
-                        <p id="visibility" class="font-bold text-xl">-- km</p>
-                    </div>
+                    <div class="flex flex-col items-center"><p class="text-gray-500 dark:text-gray-400 text-sm">Humidity</p><p id="humidity" class="font-bold text-xl">--%</p></div>
+                    <div class="flex flex-col items-center"><p class="text-gray-500 dark:text-gray-400 text-sm">Wind Speed</p><p id="wind-speed" class="font-bold text-xl">-- km/h</p></div>
+                    <div class="flex flex-col items-center"><p class="text-gray-500 dark:text-gray-400 text-sm">Feels Like</p><p id="feels-like" class="font-bold text-xl">--°C</p></div>
+                    <div class="flex flex-col items-center"><p class="text-gray-500 dark:text-gray-400 text-sm">Visibility</p><p id="visibility" class="font-bold text-xl">-- km</p></div>
                 </div>
-                 <div class="flex justify-center bg-gray-200 dark:bg-gray-700 rounded-lg p-1 w-40 mx-auto">
+                <div class="flex justify-center bg-gray-200 dark:bg-gray-700 rounded-lg p-1 w-40 mx-auto">
                     <button id="celsius-btn" class="px-4 py-1 text-sm font-semibold rounded-md bg-white dark:bg-gray-500 text-gray-800 dark:text-white shadow">°C</button>
                     <button id="fahrenheit-btn" class="px-4 py-1 text-sm font-semibold rounded-md">°F</button>
                 </div>
                 <div class="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg">
                     <h3 class="font-bold mb-4 text-lg">Today's Forecast</h3>
-                    <div id="hourly-forecast" class="flex space-x-4 overflow-x-auto pb-2">
-                        </div>
+                    <div id="hourly-forecast" class="flex space-x-4 overflow-x-auto pb-2"></div>
                 </div>
             </div>
         </main>
-        
         <section id="forecast-container" class="hidden mt-6 bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-lg">
             <h3 class="font-bold mb-4 text-lg">7-Day Forecast</h3>
-            <div id="daily-forecast" class="space-y-3">
-                </div>
+            <div id="daily-forecast" class="space-y-3"></div>
         </section>
     </div>
     <script src="script.js"></script>

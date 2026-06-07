@@ -26,7 +26,7 @@ document.addEventListener('DOMContentLoaded', () => {
     let weatherDataCache = null;
 
     // --- API Fetching (Updated for OnRender) ---
-    const getWeatherData = async (city = 'Paris') => {
+    const getWeatherData = async (city = 'Chennai') => {
         showLoading();
 
         // This URL points to our new server endpoint

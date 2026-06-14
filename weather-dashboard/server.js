@@ -42,13 +42,6 @@ app.get('/api/weather', async (req, res) => {
     }
 });
 
-app.get('/service-status', (req, res) => {
-    res.json({
-        status: 'ok',
-        service: 'Dynamic Weather Dashboard Service API'
-    });
-});
-
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
 });

@@ -7,9 +7,19 @@ app.set('trust proxy', 1);
 
 const PORT = process.env.PORT || 3000;
 
+const rateLimit = require('express-rate-limit');
+
+const weatherLimiter = rateLimit({
+    windowMs: 60 * 1000, // 1 minute
+    max: 10, // 10 requests per minute per IP
+    message: {
+        error: "Too many requests. Please try again later."
+    }
+});
+
 app.use(express.static(path.join(__dirname, 'public')));
 
-app.get('/api/weather', async (req, res) => {
+app.get('/api/weather', weatherLimiter, async (req, res) => {
     const city = req.query.city;
     const apiKey = process.env.WEATHER_API_KEY;
 
